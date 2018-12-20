@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>画板</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id = actions class="actions">
+        <button id="eraser">橡皮擦</button>
+        <button id="brush">画笔</button>
+    </div>
+    
+    <script>
+    var canvas = document.getElementById('canvas'); 
+    var context = canvas.getContext('2d');    
+    
+    autoset(canvas)
+
+    listenToMouse(canvas)
+
+    var enEraser = false
+    eraser.onclick = function(){
+        enEraser = true
+    } 
+    brush.onclick = function(){
+        enEraser = false
+    }
+
+    function drawLine(x1,y1,x2,y2){
+        context.beginPath();
+        context.moveTo(x1,y1)
+        context.lineWidth = 2
+        context.lineTo(x2,y2)
+        context.stroke()
+        context.closePath()
+    }
+    function autoset(canvas){
+        area()
+
+    window.onresize = function(){
+        area()
+    }
+    function area(){
+    var pageWidth = document.documentElement.clientWidth
+    var pageHeight = document.documentElement.clientHeight    
+
+    canvas.width = pageWidth
+    canvas.height = pageHeight
+    }
+    }
+    function listenToMouse(canvas){
+    var lastPoint = {x:undefined, y:undefined}
+    var using = false
+    canvas.onmousedown = function(draw){
+        var x = draw.clientX
+        var y = draw.clientY
+        using = true
+        if(enEraser){ 
+            context.clearRect(x-5,y-5,10,10)
+        }else{
+        lastPoint = {"x":x,"y":y}
+        }
+    }
+    canvas.onmousemove = function(draw){
+        var x = draw.clientX
+        var y = draw.clientY
+        if(!using){return}
+        if(enEraser){
+            if(using){
+                context.clearRect(x-5,y-5,10,10)
+            }
+        }else{   
+            var newPoint = {"x":x, "y":y}
+            drawLine(lastPoint.x,lastPoint.y,newPoint.x,newPoint.y)
+            lastPoint = newPoint      
+        }
+    }
+    canvas.on,onmouseup = function(draw){
+        using = false
+    }
+    }
+
+    eraser.onclick = function(){
+        enEraser = !enEraser
+    }
+    </script>
+</body>
+</html>
