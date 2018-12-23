@@ -2,38 +2,97 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>画板</title>
     <link rel="stylesheet" href="./style.css">
+    <script src="//at.alicdn.com/t/font_979239_aivktzytra6.js"></script>
 </head>
 <body>
     <canvas id="canvas"></canvas>
     <div id = actions class="actions">
-        <button id="eraser">橡皮擦</button>
-        <button id="brush">画笔</button>
+        <svg id="pencil" class="active icon">
+            <use xlink:href="#icon-pencil"></use>
+        </svg>    
+        <svg id="eraser" class="icon">
+            <use xlink:href="#icon-eraser"></use>
+        </svg>
+        <svg id="clear" class="icon">
+                <use xlink:href="#icon-clear"></use>
+        </svg>
     </div>
-    
+    <ol class="colors">
+        <li id="black" class="black"></li>
+        <li id="red" class="red"></li>
+        <li id="green" class="green"></li>
+        <li id="blue" class="blue"></li>
+    </ol>
+    <ol class="sizes">
+        <li id="thin" class="thin"></li>
+        <li id="thick" class="thick"></li>
+    </ol>
     <script>
     var canvas = document.getElementById('canvas'); 
     var context = canvas.getContext('2d');    
+    var lineWidth = 2
     
     autoset(canvas)
 
-    listenToMouse(canvas)
+    listenToUser(canvas)
 
-    var enEraser = false
+    var enEraser = false 
+    pencil.onclick = function(){
+        enEraser = false
+        pencil.classList.add('active')
+        eraser.classList.remove('active')
+    }
     eraser.onclick = function(){
         enEraser = true
-    } 
-    brush.onclick = function(){
-        enEraser = false
+        pencil.classList.remove('active')
+        eraser.classList.add('active')    
+    }
+    black.onclick = function(){
+        context.strokeStyle = 'black'
+        black.classList.add('active')
+        red.classList.remove('active')
+        green.classList.remove('active')
+        blue.classList.remove('active')
+    }
+    red.onclick = function(){
+        context.strokeStyle = 'red'
+        red.classList.add('active')
+        green.classList.remove('active')
+        blue.classList.remove('active')
+        black.classList.remove('active')
+    }
+    green.onclick = function(){
+        context.strokeStyle = 'green'
+        red.classList.remove('active')
+        green.classList.add('active')
+        blue.classList.remove('active')
+        black.classList.remove('active')
+    }
+    blue.onclick = function(){
+        context.strokeStyle = 'blue'
+        red.classList.remove('active')
+        green.classList.remove('active')
+        blue.classList.add('active')
+        black.classList.remove('active')
+    }
+    thin.onclick = function(){
+        lineWidth = 2
+    }
+    thick.onclick = function(){
+        lineWidth = 6
+    }
+    clear.onclick = function(){
+        context.clearRect(0,0,canvas.width,canvas.height);
     }
 
     function drawLine(x1,y1,x2,y2){
         context.beginPath();
         context.moveTo(x1,y1)
-        context.lineWidth = 2
+        context.lineWidth = lineWidth
         context.lineTo(x2,y2)
         context.stroke()
         context.closePath()
@@ -52,10 +111,39 @@
     canvas.height = pageHeight
     }
     }
-    function listenToMouse(canvas){
+    function listenToUser(canvas){
     var lastPoint = {x:undefined, y:undefined}
     var using = false
-    canvas.onmousedown = function(draw){
+    if(document.body.ontouchstart !== undefined){
+        canvas.ontouchstart = function(draw){
+        var x = draw.touches[0].clientX
+        var y = draw.touches[0].clientY
+        using = true
+        if(enEraser){ 
+            context.clearRect(x-5,y-5,10,10)
+        }else{
+        lastPoint = {"x":x,"y":y}
+        }
+        }
+        canvas.ontouchmove = function(draw){
+        var x = draw.touches[0].clientX
+        var y = draw.touches[0].clientY
+        if(!using){return}
+        if(enEraser){
+            if(using){
+                context.clearRect(x-5,y-5,10,10)
+            }
+        }else{   
+            var newPoint = {"x":x, "y":y}
+            drawLine(lastPoint.x,lastPoint.y,newPoint.x,newPoint.y)
+            lastPoint = newPoint      
+        }
+        }
+        canvas.ontouchend = function(){
+            using = false
+        }
+    }else{
+        canvas.onmousedown = function(draw){
         var x = draw.clientX
         var y = draw.clientY
         using = true
@@ -83,10 +171,8 @@
         using = false
     }
     }
-
-    eraser.onclick = function(){
-        enEraser = !enEraser
     }
+
     </script>
 </body>
 </html>
