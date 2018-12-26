@@ -10,7 +10,7 @@
 </head>
 <body>
     <canvas id="canvas"></canvas>
-    <div id = actions class="actions">
+    <div id ="actions" class="actions">
         <svg id="pencil" class="active icon">
             <use xlink:href="#icon-pencil"></use>
         </svg>    
@@ -48,11 +48,19 @@
         enEraser = false
         pencil.classList.add('active')
         eraser.classList.remove('active')
+        black.classList.remove('active')
+        red.classList.remove('active')
+        green.classList.remove('active')
+        blue.classList.remove('active')
     }
     eraser.onclick = function(){
         enEraser = true
         pencil.classList.remove('active')
-        eraser.classList.add('active')    
+        eraser.classList.add('active')
+        black.classList.remove('active')
+        red.classList.remove('active')
+        green.classList.remove('active')
+        blue.classList.remove('active')    
     }
     black.onclick = function(){
         context.strokeStyle = 'black'
