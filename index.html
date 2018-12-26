@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>画板</title>
     <link rel="stylesheet" href="./style.css">
-    <script src="//at.alicdn.com/t/font_979239_aivktzytra6.js"></script>
+    <script src="//at.alicdn.com/t/font_979239_lde7mcci8pd.js"></script>
 </head>
 <body>
     <canvas id="canvas"></canvas>
@@ -19,6 +19,9 @@
         </svg>
         <svg id="clear" class="icon">
                 <use xlink:href="#icon-clear"></use>
+        </svg>
+        <svg id="save" class="save">
+            <use xlink:href="#icon-save"></use>
         </svg>
     </div>
     <ol class="colors">
@@ -87,6 +90,15 @@
     }
     clear.onclick = function(){
         context.clearRect(0,0,canvas.width,canvas.height);
+    }
+    save.onclick = function(){
+       var url = canvas.toDataURL("image/png")
+       var a = document.createElement('a')
+       document.body.appendChild(a)
+       a.href = url
+       a.download = '我的画'
+       a.target = '_blank'
+       a.click() 
     }
 
     function drawLine(x1,y1,x2,y2){
